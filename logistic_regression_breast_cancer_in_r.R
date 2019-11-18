@@ -5,6 +5,9 @@ data2<-data(BreastCancer)
 data2<-BreastCancer
 data2<-na.omit(data2)
 data2<-data2[-1]
+
+for(i in 1:ncol(data2)){data2[,i]<-as.numeric(as.factor(data2[,i]))}
+
 data2<-as.matrix(data2)
 
 data2[,10]<-as.numeric(as.factor(data2[,10]))
@@ -18,10 +21,10 @@ test<-data2[split==2,]
 trainx<-train[,1:9]
 train_y<-as.numeric(as.factor(train[,10]))
 
-trian_y<-train_y-1
+train_y<-train_y-1
 
 
-y_train<- to_categorical(trian_y)
+y_train<- to_categorical(train_y)
 
 
 testx<-test[,1:9]
@@ -36,7 +39,6 @@ model %>%
   layer_dense(units =512,activation = 'relu',input_shape = 9) %>%
   layer_dense(units = 10, activation = 'relu')%>%
   layer_dense(units = 10, activation = 'relu')%>%
-  
   layer_dense(units = 2, activation = 'sigmoid')
   
 
@@ -48,6 +50,7 @@ model %>% compile(
 )
 
 summary(model)
+
 trainx<-as.matrix(trainx)
 class(trainx)
 history <- model %>% fit(trainx,y_train,epochs=50,batch_size=5,validation_split=0.2)
@@ -65,5 +68,5 @@ sam<-predict_classes(model,testx)
 library(caret)
 
 table(sam,test_y)
+confusionMatrix(table(sam,test_y))
 
-85+54
